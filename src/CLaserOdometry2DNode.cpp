@@ -77,7 +77,7 @@ CLaserOdometry2DNode::CLaserOdometry2DNode() :
   pn.param<std::string>("base_frame_id", base_frame_id, "/base_link");
   pn.param<std::string>("odom_frame_id", odom_frame_id, "/odom");
   pn.param<bool>("publish_tf", publish_tf, true);
-  pn.param<std::string>("init_pose_from_topic", init_pose_from_topic, "/base_pose_ground_truth");
+  pn.param<std::string>("init_pose_from_topic", init_pose_from_topic, "");
   pn.param<double>("freq",freq,10.0);
   pn.param<bool>("verbose", verbose, true);
 
@@ -86,23 +86,14 @@ CLaserOdometry2DNode::CLaserOdometry2DNode() :
   odom_pub  = pn.advertise<nav_msgs::Odometry>(odom_topic, 5);
   laser_sub = n.subscribe<sensor_msgs::LaserScan>(laser_scan_topic,1,&CLaserOdometry2DNode::LaserCallBack,this);
 
-  //init pose??
-  if (init_pose_from_topic != "")
-  {
-    initPose_sub = n.subscribe<nav_msgs::Odometry>(init_pose_from_topic,1,&CLaserOdometry2DNode::initPoseCallBack,this);
-    GT_pose_initialized  = false;
-  }
-  else
-  {
-    GT_pose_initialized = true;
-    initial_robot_pose.pose.pose.position.x = 0;
-    initial_robot_pose.pose.pose.position.y = 0;
-    initial_robot_pose.pose.pose.position.z = 0;
-    initial_robot_pose.pose.pose.orientation.w = 0;
-    initial_robot_pose.pose.pose.orientation.x = 0;
-    initial_robot_pose.pose.pose.orientation.y = 0;
-    initial_robot_pose.pose.pose.orientation.z = 0;
-  }
+  GT_pose_initialized = true;
+  initial_robot_pose.pose.pose.position.x = 0;
+  initial_robot_pose.pose.pose.position.y = 0;
+  initial_robot_pose.pose.pose.position.z = 0;
+  initial_robot_pose.pose.pose.orientation.w = 0;
+  initial_robot_pose.pose.pose.orientation.x = 0;
+  initial_robot_pose.pose.pose.orientation.y = 0;
+  initial_robot_pose.pose.pose.orientation.z = 1;
 
   setLaserPoseFromTf();
 
